@@ -5,6 +5,7 @@ import {
   createInitialRods,
   isSolved,
   targetRodProgress,
+  topDisc,
 } from "@/lib/hanoi";
 import { DIFFICULTIES, ROUND_DURATION_MS, minMovesForDiscs } from "@/lib/difficulty";
 import { previewScore } from "@/lib/scoring";
@@ -70,6 +71,21 @@ function reducer(state: GameState, action: Action): GameState {
       const movingDisc = state.rods[action.from][state.rods[action.from].length - 1];
       const nextRods = applyMove(state.rods, action.from, action.to);
       const solved = isSolved(nextRods, state.discCount);
+      if (solved) {
+        console.debug("[Hanoi Royale] final move", {
+          from: action.from,
+          to: action.to,
+          movingDisc,
+          moves: state.moves + 1,
+          rods: nextRods,
+        });
+        console.debug("[Hanoi Royale] win detection", {
+          targetTowerIndex: 2,
+          discCount: state.discCount,
+          targetTower: nextRods[2],
+          solved,
+        });
+      }
       const startedAt = state.startedAt ?? action.now;
       const endedAt = solved ? action.now : state.endedAt;
       return {
@@ -99,6 +115,7 @@ export interface GameAPI {
   startedAt: number | null;
   endedAt: number | null;
   selectedRod: RodId | null;
+  selectedDisc: number | null;
   invalidRod: RodId | null;
   invalidNonce: number;
   lastMovedDisc: number | null;
@@ -233,6 +250,7 @@ export function useGame(initialDifficulty: Difficulty): GameAPI {
     startedAt: state.startedAt,
     endedAt: state.endedAt,
     selectedRod: state.selectedRod,
+    selectedDisc: state.selectedRod == null ? null : topDisc(state.rods[state.selectedRod]),
     invalidRod: state.invalidRod,
     invalidNonce: state.invalidNonce,
     lastMovedDisc: state.lastMovedDisc,

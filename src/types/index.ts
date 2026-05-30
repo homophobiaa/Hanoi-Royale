@@ -59,6 +59,22 @@ export interface ScoreRecord {
   createdAt: number; // epoch ms
 }
 
+export interface GameResult {
+  playerName: string;
+  difficulty: Difficulty;
+  discs: number;
+  moves: number;
+  minMoves: number;
+  remainingMs: number;
+  elapsedMs: number;
+  solved: boolean;
+  progressPercent: number;
+  efficiency: number;
+  score: number;
+  reason: "solved" | "timeout" | "quit";
+  completedAt: number;
+}
+
 export interface PlayerProfile {
   id: string;
   name: string;

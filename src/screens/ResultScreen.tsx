@@ -6,7 +6,7 @@ import { computeScore } from "@/lib/scoring";
 import { DIFFICULTIES } from "@/lib/difficulty";
 import { formatMs, formatNumber, formatPercent } from "@/lib/format";
 import { SFX } from "@/lib/audio";
-import type { GameResult } from "@/screens/GameScreen";
+import type { GameResult } from "@/types";
 
 interface Props {
   result: GameResult;
@@ -27,9 +27,10 @@ export function ResultScreen({
   onScoring,
   onMenu,
 }: Props) {
-  const cfg = DIFFICULTIES[result.difficulty];
+  const difficulty = result.difficulty in DIFFICULTIES ? result.difficulty : "medium";
+  const cfg = DIFFICULTIES[difficulty];
   const breakdown = computeScore({
-    difficulty: result.difficulty,
+    difficulty,
     discs: result.discs,
     moves: result.moves,
     remainingSeconds: Math.floor(result.remainingMs / 1000),
@@ -87,7 +88,9 @@ export function ResultScreen({
           </h1>
 
           <p className="mt-2 text-white/50 text-sm">
-            <span className="text-white/75 font-medium">{playerName}</span>
+            <span className="text-white/75 font-medium">
+              {result.playerName || playerName || "Player"}
+            </span>
             {" · "}
             {cfg.label} · {cfg.discs} discs
           </p>
@@ -127,11 +130,12 @@ export function ResultScreen({
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.13, duration: 0.4 }}
-          className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-5"
+          className="grid grid-cols-2 sm:grid-cols-5 gap-2.5 mb-5"
         >
           <KV k="Moves" v={`${result.moves}`} />
           <KV k="Min moves" v={`${result.minMoves}`} />
           <KV k="Efficiency" v={formatPercent(result.efficiency, 0)} />
+          <KV k="Time left" v={formatMs(result.remainingMs)} />
           <KV
             k="Time used"
             v={result.elapsedMs > 0 ? formatMs(result.elapsedMs) : "—"}

@@ -1,9 +1,10 @@
-import type { AppSettings, PlayerProfile, ScoreRecord } from "@/types";
+import type { AppSettings, GameResult, PlayerProfile, ScoreRecord } from "@/types";
 
 const KEYS = {
   players: "hanoi-royale:players:v1",
   activePlayer: "hanoi-royale:activePlayer:v1",
   scores: "hanoi-royale:scores:v1",
+  latestResult: "hanoi-royale:latestResult:v1",
   settings: "hanoi-royale:settings:v1",
 } as const;
 
@@ -18,12 +19,21 @@ function safeParse<T>(raw: string | null, fallback: T): T {
 
 function read<T>(key: string, fallback: T): T {
   if (typeof window === "undefined") return fallback;
-  return safeParse<T>(window.localStorage.getItem(key), fallback);
+  try {
+    return safeParse<T>(window.localStorage.getItem(key), fallback);
+  } catch (error) {
+    console.warn("[Hanoi Royale] localStorage read failed", { key, error });
+    return fallback;
+  }
 }
 
 function write<T>(key: string, value: T): void {
   if (typeof window === "undefined") return;
-  window.localStorage.setItem(key, JSON.stringify(value));
+  try {
+    window.localStorage.setItem(key, JSON.stringify(value));
+  } catch (error) {
+    console.warn("[Hanoi Royale] localStorage write failed", { key, error });
+  }
 }
 
 /* -------- Players -------- */
@@ -109,6 +119,16 @@ export function appendScore(record: Omit<ScoreRecord, "id" | "createdAt">): Scor
 
 export function clearAllScores(): void {
   saveScores([]);
+}
+
+/* -------- Latest result -------- */
+
+export function loadLatestResult(): GameResult | null {
+  return read<GameResult | null>(KEYS.latestResult, null);
+}
+
+export function saveLatestResult(result: GameResult): void {
+  write(KEYS.latestResult, result);
 }
 
 /* -------- Settings -------- */

@@ -1,32 +1,20 @@
 import { AnimatePresence, motion } from "framer-motion";
 // AnimatePresence kept for the invalid-move message below
 import { RotateCcw, Timer, LogOut } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef } from "react";
 import { GameBoard } from "@/components/game/GameBoard";
 import { AnimatedNumber } from "@/components/AnimatedNumber";
 import { DIFFICULTIES, ROUND_DURATION_MS } from "@/lib/difficulty";
 import { formatMs } from "@/lib/format";
+import { computeScore } from "@/lib/scoring";
 import { SFX } from "@/lib/audio";
 import { useGame } from "@/hooks/useGame";
-import type { Difficulty } from "@/types";
+import type { Difficulty, GameResult } from "@/types";
 
 interface Props {
   playerName: string;
   difficulty: Difficulty;
   onComplete: (result: GameResult) => void;
-}
-
-export interface GameResult {
-  difficulty: Difficulty;
-  discs: number;
-  moves: number;
-  minMoves: number;
-  remainingMs: number;
-  elapsedMs: number;
-  solved: boolean;
-  progressPercent: number;
-  efficiency: number;
-  reason: "solved" | "timeout" | "quit";
 }
 
 export function GameScreen({ playerName, difficulty, onComplete }: Props) {
@@ -41,17 +29,22 @@ export function GameScreen({ playerName, difficulty, onComplete }: Props) {
   // game instance (guards against StrictMode double-invocation).
   const firedRef = useRef(false);
 
-  // useLayoutEffect runs synchronously after the DOM is painted.
-  // Using it (instead of useEffect + setTimeout) makes the transition fire
-  // on the exact render where phase becomes "won"/"timeout", with no async
-  // timing races or StrictMode cleanup issues.
-  useEffect(() => {
+  const completeRound = useCallback(() => {
     if (game.phase !== "won" && game.phase !== "timeout") return;
     if (firedRef.current) return;
     firedRef.current = true;
 
     const reason: GameResult["reason"] = game.phase === "won" ? "solved" : "timeout";
+    const breakdown = computeScore({
+      difficulty: game.difficulty,
+      discs: game.discCount,
+      moves: game.moves,
+      remainingSeconds: Math.floor(game.remainingMs / 1000),
+      solved: game.phase === "won",
+      progressPercent: game.progressPercent,
+    });
     const snapshot: GameResult = {
+      playerName: playerName.trim() || "Player",
       difficulty: game.difficulty,
       discs: game.discCount,
       moves: game.moves,
@@ -61,16 +54,40 @@ export function GameScreen({ playerName, difficulty, onComplete }: Props) {
       solved: game.phase === "won",
       progressPercent: game.progressPercent,
       efficiency: game.efficiency,
+      score: breakdown.finalScore,
       reason,
+      completedAt: Date.now(),
     };
+    console.debug("[Hanoi Royale] result object before rendering Result screen", snapshot);
     onCompleteRef.current(snapshot);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [game.phase]);
+  }, [
+    game.difficulty,
+    game.discCount,
+    game.efficiency,
+    game.elapsedMs,
+    game.minMoves,
+    game.moves,
+    game.phase,
+    game.progressPercent,
+    game.remainingMs,
+    playerName,
+  ]);
 
   const timerLow = game.remainingMs <= 30_000 && game.phase === "running";
   const timerCritical = game.remainingMs <= 10_000 && game.phase === "running";
   const timerStarted = game.startedAt != null;
   const gameOver = game.phase === "won" || game.phase === "timeout";
+
+  // Primary completion bridge: run as soon as React commits the terminal state.
+  useLayoutEffect(() => {
+    completeRound();
+  }, [completeRound]);
+
+  // Defensive fallback: if a terminal render is visible but effects are delayed
+  // or interrupted, queue the handoff without throwing during render.
+  if (gameOver && !firedRef.current) {
+    queueMicrotask(completeRound);
+  }
 
   return (
     <motion.div
@@ -189,6 +206,7 @@ export function GameScreen({ playerName, difficulty, onComplete }: Props) {
             onClick={() => {
               SFX.click();
               onCompleteRef.current({
+                playerName: playerName.trim() || "Player",
                 difficulty: game.difficulty,
                 discs: game.discCount,
                 moves: game.moves,
@@ -198,7 +216,16 @@ export function GameScreen({ playerName, difficulty, onComplete }: Props) {
                 solved: false,
                 progressPercent: game.progressPercent,
                 efficiency: game.efficiency,
+                score: computeScore({
+                  difficulty: game.difficulty,
+                  discs: game.discCount,
+                  moves: game.moves,
+                  remainingSeconds: Math.floor(game.remainingMs / 1000),
+                  solved: false,
+                  progressPercent: game.progressPercent,
+                }).finalScore,
                 reason: "quit",
+                completedAt: Date.now(),
               });
             }}
             disabled={gameOver}
