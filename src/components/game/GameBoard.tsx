@@ -29,7 +29,7 @@ export function GameBoard({
   onDragMove,
   boardHeight = 340,
 }: Props) {
-  const rodHeight = boardHeight - 80;
+  const rodHeight = boardHeight - 74;
   const rodRefs = useRef<Array<HTMLButtonElement | null>>([null, null, null]);
   const [hoveredRod, setHoveredRod] = useState<RodId | null>(null);
 
@@ -38,7 +38,7 @@ export function GameBoard({
     setHoveredRod(null);
   }, [invalidNonce]);
 
-  const columnWidth = Math.max(discWidth(discCount) + 36, 160);
+  const columnWidth = Math.max(discWidth(discCount) + 38, 180);
 
   const handleDragEnd = (from: RodId) =>
     (_e: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
@@ -81,7 +81,7 @@ export function GameBoard({
   return (
     <div className="w-full">
       <div
-        className="relative mx-auto flex items-end justify-center gap-3 sm:gap-6 lg:gap-10 pt-6"
+        className="relative mx-auto flex items-end justify-center gap-3 sm:gap-5 lg:gap-8 pt-3"
         style={{ height: boardHeight }}
       >
         {RODS.map((id) => {

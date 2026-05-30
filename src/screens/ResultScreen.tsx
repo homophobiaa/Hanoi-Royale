@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Home, RefreshCw, Trophy, Users, Calculator, CheckCircle2, XCircle, Clock } from "lucide-react";
+import { Calculator, CheckCircle2, Clock, Home, RefreshCw, Trophy, Users, XCircle } from "lucide-react";
 import { PageShell } from "@/components/PageShell";
 import { AnimatedNumber } from "@/components/AnimatedNumber";
 import { computeScore } from "@/lib/scoring";
@@ -55,16 +55,15 @@ export function ResultScreen({
         : "Time's Up";
 
   return (
-    <PageShell>
-      <div className="max-w-2xl mx-auto">
-        {/* Header */}
+    <PageShell className="py-4 sm:py-6 lg:py-8">
+      <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
-          className="text-center mb-6"
+          className="text-center mb-4"
         >
-          <div className="flex items-center justify-center gap-2 mb-3">
+          <div className="flex items-center justify-center gap-2 mb-2">
             {result.solved ? (
               <CheckCircle2 className="h-5 w-5 text-emerald-300" />
             ) : (
@@ -81,7 +80,7 @@ export function ResultScreen({
             </span>
           </div>
 
-          <h1 className="font-display text-4xl sm:text-5xl tracking-tight">
+          <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl tracking-tight">
             {result.solved ? (
               <span className="gradient-text">{headline}</span>
             ) : (
@@ -98,201 +97,200 @@ export function ResultScreen({
           </p>
         </motion.div>
 
-        {/* Score hero */}
-        <motion.div
-          initial={{ opacity: 0, y: 14, scale: 0.97 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ delay: 0.08, duration: 0.5 }}
-          className="relative glass-card gradient-border p-7 sm:p-8 text-center overflow-hidden mb-5"
-        >
-          <div
-            aria-hidden
-            className="absolute -top-28 left-1/2 -translate-x-1/2 h-64 w-64 rounded-full blur-3xl opacity-55 pointer-events-none"
-            style={{
-              background: result.solved
-                ? "radial-gradient(closest-side, rgba(245,196,81,0.4), rgba(217,70,239,0.2), transparent 70%)"
-                : "radial-gradient(closest-side, rgba(139,92,246,0.3), transparent 70%)",
-            }}
-          />
-          <div className="relative">
-            <div className="text-[11px] uppercase tracking-[0.22em] text-white/50">
-              Final Score
-            </div>
-            <div className="mt-1 font-display text-6xl sm:text-7xl tracking-tight">
-              <AnimatedNumber value={breakdown.finalScore} duration={1.3} />
-            </div>
-            <div className="mt-2 text-white/45 text-sm">
-              {cfg.label} · ×{cfg.multiplier.toFixed(2)} difficulty multiplier
-            </div>
-          </div>
-        </motion.div>
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_390px] gap-4 lg:gap-5 items-start">
+          <div className="space-y-4">
+            <motion.div
+              initial={{ opacity: 0, y: 14, scale: 0.97 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ delay: 0.08, duration: 0.5 }}
+              className="relative glass-card gradient-border px-6 py-6 sm:px-8 sm:py-7 text-center overflow-hidden"
+            >
+              <div
+                aria-hidden
+                className="absolute -top-28 left-1/2 -translate-x-1/2 h-64 w-64 rounded-full blur-3xl opacity-55 pointer-events-none"
+                style={{
+                  background: result.solved
+                    ? "radial-gradient(closest-side, rgba(245,196,81,0.4), rgba(217,70,239,0.2), transparent 70%)"
+                    : "radial-gradient(closest-side, rgba(139,92,246,0.3), transparent 70%)",
+                }}
+              />
+              <div className="relative">
+                <div className="text-[11px] uppercase tracking-[0.22em] text-white/50">
+                  Final Score
+                </div>
+                <div className="mt-1 font-display text-5xl sm:text-6xl lg:text-7xl tracking-tight">
+                  <AnimatedNumber value={breakdown.finalScore} duration={1.3} />
+                </div>
+                <div className="mt-2 text-white/45 text-sm">
+                  {cfg.label} · ×{cfg.multiplier.toFixed(2)} difficulty multiplier
+                </div>
+              </div>
+            </motion.div>
 
-        {rank && (rank.overall != null || rank.difficulty != null) && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.11, duration: 0.4 }}
-            className="glass-card px-4 py-3 mb-5 flex items-center justify-center gap-4 text-sm"
-          >
-            <span className="text-[10px] uppercase tracking-[0.18em] text-white/40">
-              Current Position
-            </span>
-            {rank.overall != null && (
-              <span className="font-display text-lg tracking-tight">
-                #{rank.overall} <span className="text-white/45 text-sm font-sans">Overall</span>
-              </span>
+            {rank && (rank.overall != null || rank.difficulty != null) && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.11, duration: 0.4 }}
+                className="glass-card px-4 py-3 flex flex-wrap items-center justify-center gap-4 text-sm"
+              >
+                <span className="text-[10px] uppercase tracking-[0.18em] text-white/40">
+                  Current Position
+                </span>
+                {rank.overall != null && (
+                  <span className="font-display text-lg tracking-tight">
+                    #{rank.overall} <span className="text-white/45 text-sm font-sans">Overall</span>
+                  </span>
+                )}
+                {rank.difficulty != null && (
+                  <span className="font-display text-lg tracking-tight">
+                    #{rank.difficulty}{" "}
+                    <span className="text-white/45 text-sm font-sans">{rank.difficultyLabel}</span>
+                  </span>
+                )}
+              </motion.div>
             )}
-            {rank.difficulty != null && (
-              <span className="font-display text-lg tracking-tight">
-                #{rank.difficulty}{" "}
-                <span className="text-white/45 text-sm font-sans">{rank.difficultyLabel}</span>
-              </span>
-            )}
-          </motion.div>
-        )}
 
-        {/* Stats */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.13, duration: 0.4 }}
-          className="grid grid-cols-2 sm:grid-cols-5 gap-2.5 mb-5"
-        >
-          <KV k="Moves" v={`${result.moves}`} />
-          <KV k="Min moves" v={`${result.minMoves}`} />
-          <KV k="Efficiency" v={formatPercent(result.efficiency, 0)} />
-          <KV k="Time left" v={formatMs(result.remainingMs)} />
-          <KV
-            k="Time used"
-            v={result.elapsedMs > 0 ? formatMs(result.elapsedMs) : "—"}
-            icon={<Clock className="h-3 w-3 text-white/30" />}
-          />
-        </motion.div>
-
-        {/* Score breakdown */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.18, duration: 0.4 }}
-          className="glass-card p-4 sm:p-5 mb-5"
-        >
-          <div className="text-[11px] uppercase tracking-[0.18em] text-white/40 mb-3">
-            Score Breakdown
-          </div>
-          <div className="space-y-2.5 text-sm">
-            {result.solved ? (
-              <>
-                <BLine
-                  label="Move efficiency"
-                  sub={`${result.moves} moves / ${result.minMoves} min = ${formatPercent(breakdown.moveEfficiency, 0)}`}
-                  value={Math.round(breakdown.efficiencyPoints)}
-                />
-                <BLine
-                  label="Time bonus"
-                  sub={`${formatMs(result.remainingMs)} remaining`}
-                  value={Math.round(breakdown.timeBonus)}
-                />
-                <BLine
-                  label="Completion bonus"
-                  sub="puzzle solved"
-                  value={Math.round(breakdown.completionBonus)}
-                />
-                <div className="h-px bg-white/10" />
-                <BLine
-                  label={`Difficulty multiplier ×${cfg.multiplier.toFixed(2)}`}
-                  sub="harder difficulty → more points"
-                  value={breakdown.finalScore}
-                  highlight
-                />
-              </>
-            ) : (
-              <>
-                <BLine
-                  label="Partial credit"
-                  sub={`${formatPercent(result.progressPercent, 0)} of discs moved toward target`}
-                  value={Math.round(breakdown.preMultiplier)}
-                />
-                <div className="h-px bg-white/10" />
-                <BLine
-                  label={`Difficulty multiplier ×${cfg.multiplier.toFixed(2)}`}
-                  sub="harder difficulty → more points"
-                  value={breakdown.finalScore}
-                  highlight
-                />
-              </>
-            )}
-          </div>
-        </motion.div>
-
-        {/* Buttons */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.24, duration: 0.4 }}
-          className="space-y-2.5"
-        >
-          {/* Primary: Next Player */}
-          <motion.button
-            whileHover={{ scale: 1.015 }}
-            whileTap={{ scale: 0.985 }}
-            className="w-full btn-primary text-base py-4 flex items-center justify-center gap-2"
-            onClick={() => {
-              SFX.click();
-              onNextPlayer();
-            }}
-          >
-            <Users className="h-5 w-5" />
-            Next Player
-          </motion.button>
-
-          {/* Secondary row */}
-          <div className="grid grid-cols-2 gap-2.5">
-            <button
-              className="btn-ghost flex items-center justify-center gap-2"
-              onClick={() => {
-                SFX.click();
-                onPlayAgain();
-              }}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.13, duration: 0.4 }}
+              className="grid grid-cols-2 sm:grid-cols-5 gap-2.5"
             >
-              <RefreshCw className="h-4 w-4" />
-              Play Again
-            </button>
-            <button
-              className="btn-ghost flex items-center justify-center gap-2"
-              onClick={() => {
-                SFX.click();
-                onLeaderboard();
-              }}
-            >
-              <Trophy className="h-4 w-4" />
-              Leaderboard
-            </button>
+              <KV k="Moves" v={`${result.moves}`} />
+              <KV k="Min moves" v={`${result.minMoves}`} />
+              <KV k="Efficiency" v={formatPercent(result.efficiency, 0)} />
+              <KV k="Time left" v={formatMs(result.remainingMs)} />
+              <KV
+                k="Time used"
+                v={result.elapsedMs > 0 ? formatMs(result.elapsedMs) : "-"}
+                icon={<Clock className="h-3 w-3 text-white/30" />}
+              />
+            </motion.div>
           </div>
 
-          {/* Tertiary row */}
-          <div className="grid grid-cols-2 gap-2.5">
-            <button
-              className="btn-ghost flex items-center justify-center gap-2 text-white/50 hover:text-white/80"
-              onClick={() => {
-                SFX.click();
-                onScoring();
-              }}
+          <div className="space-y-4">
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.18, duration: 0.4 }}
+              className="glass-card p-4 sm:p-5"
             >
-              <Calculator className="h-4 w-4" />
-              Scoring Formula
-            </button>
-            <button
-              className="btn-ghost flex items-center justify-center gap-2 text-white/50 hover:text-white/80"
-              onClick={() => {
-                SFX.click();
-                onMenu();
-              }}
+              <div className="text-[11px] uppercase tracking-[0.18em] text-white/40 mb-3">
+                Score Breakdown
+              </div>
+              <div className="space-y-2.5 text-sm">
+                {result.solved ? (
+                  <>
+                    <BLine
+                      label="Move efficiency"
+                      sub={`${result.moves} moves / ${result.minMoves} min = ${formatPercent(breakdown.moveEfficiency, 0)}`}
+                      value={Math.round(breakdown.efficiencyPoints)}
+                    />
+                    <BLine
+                      label="Time bonus"
+                      sub={`${formatMs(result.remainingMs)} remaining`}
+                      value={Math.round(breakdown.timeBonus)}
+                    />
+                    <BLine
+                      label="Completion bonus"
+                      sub="puzzle solved"
+                      value={Math.round(breakdown.completionBonus)}
+                    />
+                    <div className="h-px bg-white/10" />
+                    <BLine
+                      label={`Difficulty multiplier ×${cfg.multiplier.toFixed(2)}`}
+                      sub="harder difficulty → more points"
+                      value={breakdown.finalScore}
+                      highlight
+                    />
+                  </>
+                ) : (
+                  <>
+                    <BLine
+                      label="Partial credit"
+                      sub={`${formatPercent(result.progressPercent, 0)} of discs moved toward target`}
+                      value={Math.round(breakdown.preMultiplier)}
+                    />
+                    <div className="h-px bg-white/10" />
+                    <BLine
+                      label={`Difficulty multiplier ×${cfg.multiplier.toFixed(2)}`}
+                      sub="harder difficulty → more points"
+                      value={breakdown.finalScore}
+                      highlight
+                    />
+                  </>
+                )}
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.24, duration: 0.4 }}
+              className="glass-card p-3 sm:p-4"
             >
-              <Home className="h-4 w-4" />
-              Main Menu
-            </button>
+              <motion.button
+                whileHover={{ scale: 1.015 }}
+                whileTap={{ scale: 0.985 }}
+                className="w-full btn-primary text-base py-4 flex items-center justify-center gap-2"
+                onClick={() => {
+                  SFX.click();
+                  onNextPlayer();
+                }}
+              >
+                <Users className="h-5 w-5" />
+                Next Player
+              </motion.button>
+
+              <div className="mt-2.5 grid grid-cols-2 gap-2.5">
+                <button
+                  className="btn-ghost flex items-center justify-center gap-2"
+                  onClick={() => {
+                    SFX.click();
+                    onPlayAgain();
+                  }}
+                >
+                  <RefreshCw className="h-4 w-4" />
+                  Play Again
+                </button>
+                <button
+                  className="btn-ghost flex items-center justify-center gap-2"
+                  onClick={() => {
+                    SFX.click();
+                    onLeaderboard();
+                  }}
+                >
+                  <Trophy className="h-4 w-4" />
+                  Leaderboard
+                </button>
+              </div>
+
+              <div className="mt-2.5 grid grid-cols-2 gap-2.5">
+                <button
+                  className="btn-ghost flex items-center justify-center gap-2 text-white/50 hover:text-white/80"
+                  onClick={() => {
+                    SFX.click();
+                    onScoring();
+                  }}
+                >
+                  <Calculator className="h-4 w-4" />
+                  Scoring Formula
+                </button>
+                <button
+                  className="btn-ghost flex items-center justify-center gap-2 text-white/50 hover:text-white/80"
+                  onClick={() => {
+                    SFX.click();
+                    onMenu();
+                  }}
+                >
+                  <Home className="h-4 w-4" />
+                  Main Menu
+                </button>
+              </div>
+            </motion.div>
           </div>
-        </motion.div>
+        </div>
       </div>
     </PageShell>
   );

@@ -251,9 +251,9 @@ export function GameScreen({ playerName, difficulty, scores, onComplete }: Props
       </div>
 
       {/* ── Board (dominant) ── */}
-      <div className="flex-1 flex flex-col px-3 sm:px-6">
-        <div className="max-w-6xl mx-auto w-full flex-1 grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_220px] gap-3 sm:gap-4">
-          <div className="min-w-0 flex-1 glass-card gradient-border p-3 sm:p-5 flex flex-col">
+      <div className="relative flex-1 flex flex-col px-3 sm:px-6">
+        <div className="relative mx-auto w-full max-w-7xl flex-1">
+          <div className="mx-auto w-full max-w-[980px] min-w-0 rounded-2xl border border-white/[0.06] bg-white/[0.035] backdrop-blur-xl shadow-inner-glass p-2 sm:p-3 flex flex-col">
             <GameBoard
               rods={game.rods}
               discCount={game.discCount}
@@ -263,7 +263,7 @@ export function GameScreen({ playerName, difficulty, scores, onComplete }: Props
               disabled={gameOver}
               onRodClick={game.handleRodClick}
               onDragMove={(from, to) => game.tryMove(from, to)}
-              boardHeight={440}
+              boardHeight={560}
             />
 
             {/* Invalid move message */}
@@ -282,7 +282,10 @@ export function GameScreen({ playerName, difficulty, scores, onComplete }: Props
               )}
             </AnimatePresence>
           </div>
-          <LiveLeaderboard scores={topScores} />
+          <LiveLeaderboard
+            scores={topScores}
+            className="mt-3 xl:mt-0 xl:absolute xl:right-0 xl:top-0 xl:w-[232px]"
+          />
         </div>
       </div>
 
@@ -339,13 +342,13 @@ export function GameScreen({ playerName, difficulty, scores, onComplete }: Props
   );
 }
 
-function LiveLeaderboard({ scores }: { scores: ScoreRecord[] }) {
+function LiveLeaderboard({ scores, className = "" }: { scores: ScoreRecord[]; className?: string }) {
   return (
     <motion.aside
       initial={{ opacity: 0, x: 10 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay: 0.12, duration: 0.35 }}
-      className="glass-card p-3 self-start xl:sticky xl:top-4"
+      className={`glass-card p-3 self-start ${className}`}
     >
       <div className="text-[10px] uppercase tracking-[0.18em] text-white/40 mb-2">
         Top Scores
