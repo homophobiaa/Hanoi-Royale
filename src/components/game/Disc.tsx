@@ -1,9 +1,9 @@
 import { motion, type PanInfo } from "framer-motion";
 import { forwardRef } from "react";
 
-export const DISC_BASE_WIDTH = 64;
-export const DISC_STEP = 28;
-export const DISC_HEIGHT = 32;
+export const DISC_BASE_WIDTH = 90;
+export const DISC_STEP = 32;
+export const DISC_HEIGHT = 40;
 
 export function discWidth(size: number): number {
   return DISC_BASE_WIDTH + DISC_STEP * (size - 1);

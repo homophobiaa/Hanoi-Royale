@@ -12,8 +12,8 @@ interface Props {
   disabled: boolean;
   onRodClick: (rod: RodId) => void;
   onDragMove: (from: RodId, to: RodId) => void;
-  /** Total height of the board container in px. Default 340. */
-  boardHeight?: number;
+  /** Total height of the board container. Default 340px. */
+  boardHeight?: number | string;
 }
 
 const RODS: RodId[] = [0, 1, 2];
@@ -29,7 +29,8 @@ export function GameBoard({
   onDragMove,
   boardHeight = 340,
 }: Props) {
-  const rodHeight = boardHeight - 74;
+  const boardHeightStyle = boardHeight;
+  const rodHeight = typeof boardHeight === "number" ? boardHeight - 74 : `calc(${boardHeight} - 74px)`;
   const rodRefs = useRef<Array<HTMLButtonElement | null>>([null, null, null]);
   const [hoveredRod, setHoveredRod] = useState<RodId | null>(null);
 
@@ -38,7 +39,7 @@ export function GameBoard({
     setHoveredRod(null);
   }, [invalidNonce]);
 
-  const columnWidth = Math.max(discWidth(discCount) + 38, 180);
+  const columnWidth = Math.max(discWidth(discCount) + 26, 220);
 
   const handleDragEnd = (from: RodId) =>
     (_e: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
@@ -81,8 +82,8 @@ export function GameBoard({
   return (
     <div className="w-full">
       <div
-        className="relative mx-auto flex items-end justify-center gap-3 sm:gap-5 lg:gap-8 pt-3"
-        style={{ height: boardHeight }}
+        className="relative mx-auto flex items-end justify-center gap-3 sm:gap-4 pt-3"
+        style={{ height: boardHeightStyle }}
       >
         {RODS.map((id) => {
           const stack = rods[id];
@@ -134,7 +135,7 @@ export function GameBoard({
                   aria-hidden
                   className="absolute left-1/2 -translate-x-1/2 bottom-0 rounded-full"
                   style={{
-                    width: 8,
+                    width: 10,
                     height: rodHeight,
                     background:
                       "linear-gradient(180deg, rgba(196,181,253,0.85) 0%, rgba(139,92,246,0.6) 60%, rgba(67,56,202,0.6) 100%)",
@@ -151,8 +152,8 @@ export function GameBoard({
                   className="absolute left-1/2 -translate-x-1/2 rounded-full"
                   style={{
                     top: -4,
-                    width: 14,
-                    height: 14,
+                    width: 16,
+                    height: 16,
                     background:
                       "radial-gradient(circle at 35% 30%, #fff 0%, #c4b5fd 40%, #7c3aed 100%)",
                     boxShadow: "0 0 18px rgba(167,139,250,0.8)",
@@ -202,9 +203,9 @@ export function GameBoard({
                 aria-hidden
                 className="relative mt-0"
                 style={{
-                  width: columnWidth - 16,
-                  height: 14,
-                  borderRadius: 10,
+                  width: columnWidth - 18,
+                  height: 16,
+                  borderRadius: 12,
                   background:
                     "linear-gradient(180deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.06) 50%, rgba(0,0,0,0.35) 100%)",
                   boxShadow:

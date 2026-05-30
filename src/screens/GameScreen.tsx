@@ -251,9 +251,8 @@ export function GameScreen({ playerName, difficulty, scores, onComplete }: Props
       </div>
 
       {/* ── Board (dominant) ── */}
-      <div className="relative flex-1 flex flex-col px-3 sm:px-6">
-        <div className="relative mx-auto w-full max-w-7xl flex-1">
-          <div className="mx-auto w-full max-w-[980px] min-w-0 rounded-2xl border border-white/[0.06] bg-white/[0.035] backdrop-blur-xl shadow-inner-glass p-2 sm:p-3 flex flex-col">
+      <div className="relative flex-1 min-h-0 flex flex-col items-center justify-center px-3 sm:px-6 py-1">
+        <div className="mx-auto w-[min(78vw,1250px)] max-w-[calc(100vw-2rem)] min-w-0 rounded-[28px] border border-white/[0.055] bg-white/[0.03] backdrop-blur-xl shadow-inner-glass p-2 sm:p-3 lg:p-4 flex flex-col">
             <GameBoard
               rods={game.rods}
               discCount={game.discCount}
@@ -263,7 +262,7 @@ export function GameScreen({ playerName, difficulty, scores, onComplete }: Props
               disabled={gameOver}
               onRodClick={game.handleRodClick}
               onDragMove={(from, to) => game.tryMove(from, to)}
-              boardHeight={560}
+              boardHeight="clamp(560px, 68vh, 760px)"
             />
 
             {/* Invalid move message */}
@@ -281,16 +280,17 @@ export function GameScreen({ playerName, difficulty, scores, onComplete }: Props
                 </motion.p>
               )}
             </AnimatePresence>
-          </div>
-          <LiveLeaderboard
-            scores={topScores}
-            className="mt-3 xl:mt-0 xl:absolute xl:right-0 xl:top-0 xl:w-[232px]"
-          />
         </div>
+        <LiveLeaderboard scores={topScores} className="mt-3 w-[min(78vw,1250px)] max-w-[calc(100vw-2rem)] xl:hidden" />
       </div>
 
+      <LiveLeaderboard
+        scores={topScores}
+        className="hidden xl:block fixed right-8 top-1/2 z-20 w-60 -translate-y-1/2"
+      />
+
       {/* ── Bottom action bar ── */}
-      <div className="flex-shrink-0 px-4 py-3 sm:px-6 sm:py-4">
+      <div className="flex-shrink-0 px-4 py-2 sm:px-6 sm:py-3">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <button
             onClick={() => {
@@ -345,8 +345,8 @@ export function GameScreen({ playerName, difficulty, scores, onComplete }: Props
 function LiveLeaderboard({ scores, className = "" }: { scores: ScoreRecord[]; className?: string }) {
   return (
     <motion.aside
-      initial={{ opacity: 0, x: 10 }}
-      animate={{ opacity: 1, x: 0 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
       transition={{ delay: 0.12, duration: 0.35 }}
       className={`glass-card p-3 self-start ${className}`}
     >
