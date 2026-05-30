@@ -59,7 +59,7 @@ export function NewPlayerScreen({ onStart, onBack }: Props) {
             <Info className="h-4 w-4 text-white/50 mt-0.5 flex-shrink-0" />
             <p className="text-white/60 text-sm leading-relaxed">
               Each player gets <strong className="text-white/85">one 5-minute attempt</strong>.
-              Solve the tower as fast and cleanly as possible for the highest score.
+              Higher difficulties have higher score potential.
             </p>
           </div>
         </motion.div>
@@ -103,7 +103,7 @@ export function NewPlayerScreen({ onStart, onBack }: Props) {
           <div className="text-[11px] uppercase tracking-[0.18em] text-white/50 mb-3">
             Difficulty
           </div>
-          <div className="grid grid-cols-3 gap-2.5">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
             {DIFFICULTY_LIST.map((d) => {
               const active = difficulty === d.id;
               const accent =
@@ -111,13 +111,17 @@ export function NewPlayerScreen({ onStart, onBack }: Props) {
                   ? "border-emerald-400/40 bg-emerald-400/[0.08]"
                   : d.id === "medium"
                     ? "border-violet-400/40 bg-violet-400/[0.08]"
-                    : "border-rose-400/40 bg-rose-400/[0.08]";
+                    : d.id === "hard"
+                      ? "border-rose-400/40 bg-rose-400/[0.08]"
+                      : "border-amber-300/40 bg-amber-400/[0.08]";
               const accentText =
                 d.id === "easy"
                   ? "text-emerald-300"
                   : d.id === "medium"
                     ? "text-violet-300"
-                    : "text-rose-300";
+                    : d.id === "hard"
+                      ? "text-rose-300"
+                      : "text-amber-200";
               return (
                 <motion.button
                   key={d.id}
@@ -143,7 +147,9 @@ export function NewPlayerScreen({ onStart, onBack }: Props) {
                             ? "radial-gradient(circle at 50% 0%, rgba(52,211,153,0.15), transparent 70%)"
                             : d.id === "medium"
                               ? "radial-gradient(circle at 50% 0%, rgba(139,92,246,0.18), transparent 70%)"
-                              : "radial-gradient(circle at 50% 0%, rgba(251,113,133,0.18), transparent 70%)",
+                              : d.id === "hard"
+                                ? "radial-gradient(circle at 50% 0%, rgba(251,113,133,0.18), transparent 70%)"
+                                : "radial-gradient(circle at 50% 0%, rgba(251,191,36,0.16), transparent 70%)",
                       }}
                     />
                   )}
@@ -158,6 +164,9 @@ export function NewPlayerScreen({ onStart, onBack }: Props) {
                     <div className="text-[11px] text-white/45 mt-0.5">{d.discs} discs</div>
                     <div className={`mt-2 text-xs font-semibold ${active ? accentText : "text-white/40"}`}>
                       ×{d.multiplier.toFixed(2)}
+                    </div>
+                    <div className="text-[10px] text-white/35 mt-0.5 leading-tight">
+                      {d.baseScore.toLocaleString()} base
                     </div>
                     <div className="text-[10px] text-white/35 mt-0.5 leading-tight">{d.tagline}</div>
                   </div>

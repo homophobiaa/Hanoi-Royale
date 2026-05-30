@@ -84,6 +84,9 @@ export const SFX = {
   click(): void {
     play([{ freq: 700, type: "sine", duration: 0.03, gain: 0.05, release: 0.05 }]);
   },
+  tick(): void {
+    play([{ freq: 880, type: "sine", duration: 0.025, gain: 0.025, release: 0.04 }]);
+  },
   win(): void {
     play([
       { freq: 523.25, type: "triangle", duration: 0.12, gain: 0.1, release: 0.15 },

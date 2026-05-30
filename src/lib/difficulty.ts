@@ -7,29 +7,35 @@ export const DIFFICULTIES: Record<Difficulty, DifficultyConfig> = {
     discs: 3,
     baseScore: 1000,
     multiplier: 1.0,
-    tagline: "Lowest risk, lowest score potential",
-    description:
-      "3 discs. A gentle introduction. Perfect for warming up — but your score ceiling is the lowest.",
+    tagline: "Quick introduction",
+    description: "3 discs. Quick introduction with the lowest score potential.",
   },
   medium: {
     id: "medium",
     label: "Medium",
-    discs: 4,
-    baseScore: 2200,
-    multiplier: 1.65,
-    tagline: "Balanced — moderate risk, solid reward",
-    description:
-      "4 discs. A balanced challenge with meaningfully higher score potential than Easy.",
+    discs: 5,
+    baseScore: 3000,
+    multiplier: 1.8,
+    tagline: "Recommended challenge",
+    description: "5 discs. Recommended challenge with higher score potential.",
   },
   hard: {
     id: "hard",
     label: "Hard",
-    discs: 5,
-    baseScore: 4000,
-    multiplier: 2.5,
-    tagline: "Highest risk, highest score potential",
-    description:
-      "5 discs. The summit. Only clean, fast solves will produce top leaderboard scores.",
+    discs: 6,
+    baseScore: 5000,
+    multiplier: 2.7,
+    tagline: "For experienced players",
+    description: "6 discs. For experienced players with very high score potential.",
+  },
+  extreme: {
+    id: "extreme",
+    label: "Extreme",
+    discs: 8,
+    baseScore: 9000,
+    multiplier: 4.0,
+    tagline: "Tournament difficulty",
+    description: "8 discs. Tournament difficulty with maximum score potential.",
   },
 };
 
@@ -37,6 +43,7 @@ export const DIFFICULTY_LIST: DifficultyConfig[] = [
   DIFFICULTIES.easy,
   DIFFICULTIES.medium,
   DIFFICULTIES.hard,
+  DIFFICULTIES.extreme,
 ];
 
 export const ROUND_DURATION_MS = 5 * 60 * 1000; // exactly 5 minutes

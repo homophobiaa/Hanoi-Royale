@@ -14,6 +14,7 @@ const ACCENTS: Record<Difficulty, { from: string; to: string; ring: string }> = 
   easy: { from: "#34d399", to: "#22d3ee", ring: "rgba(52,211,153,0.45)" },
   medium: { from: "#a78bfa", to: "#d946ef", ring: "rgba(167,139,250,0.55)" },
   hard: { from: "#fb7185", to: "#f5c451", ring: "rgba(251,113,133,0.55)" },
+  extreme: { from: "#f5c451", to: "#f97316", ring: "rgba(245,196,81,0.5)" },
 };
 
 export function DifficultyScreen({ onPick, onBack }: Props) {
@@ -41,11 +42,11 @@ export function DifficultyScreen({ onPick, onBack }: Props) {
           </h1>
           <p className="mt-2 text-white/55 max-w-2xl">
             Higher difficulty means more discs, more required moves, and a much higher
-            score ceiling. Pick wisely — the timer is the same 5:00 either way.
+            score ceiling. Pick wisely - the timer is the same 5:00 either way.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6">
           {DIFFICULTY_LIST.map((d, i) => (
             <DifficultyCard key={d.id} cfg={d} delay={i * 0.06} onPick={onPick} />
           ))}
@@ -107,7 +108,7 @@ function DifficultyCard({
 
       <dl className="relative mt-5 grid grid-cols-3 gap-2 text-center">
         <KV k="Base" v={cfg.baseScore.toLocaleString()} />
-        <KV k="Multiplier" v={`${cfg.multiplier.toFixed(2)}×`} />
+        <KV k="Multiplier" v={`${cfg.multiplier.toFixed(2)}x`} />
         <KV k="Min moves" v={`${minMoves}`} />
       </dl>
 
@@ -118,9 +119,10 @@ function DifficultyCard({
       </div>
 
       <div className="relative mt-4 text-[11px] uppercase tracking-[0.18em] text-white/40">
-        {cfg.id === "easy" && "Lowest risk · lowest score potential"}
-        {cfg.id === "medium" && "Balanced risk · solid score potential"}
-        {cfg.id === "hard" && "Highest risk · highest score potential"}
+        {cfg.id === "easy" && "Quick introduction · lowest score potential"}
+        {cfg.id === "medium" && "Recommended challenge · higher score potential"}
+        {cfg.id === "hard" && "Experienced players · very high score potential"}
+        {cfg.id === "extreme" && "Tournament difficulty · maximum score potential"}
       </div>
     </motion.button>
   );

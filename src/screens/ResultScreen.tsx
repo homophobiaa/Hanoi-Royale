@@ -6,11 +6,12 @@ import { computeScore } from "@/lib/scoring";
 import { DIFFICULTIES } from "@/lib/difficulty";
 import { formatMs, formatNumber, formatPercent } from "@/lib/format";
 import { SFX } from "@/lib/audio";
-import type { GameResult } from "@/types";
+import type { GameResult, ResultRank } from "@/types";
 
 interface Props {
   result: GameResult;
   playerName: string;
+  rank: ResultRank | null;
   onNextPlayer: () => void;
   onPlayAgain: () => void;
   onLeaderboard: () => void;
@@ -21,6 +22,7 @@ interface Props {
 export function ResultScreen({
   result,
   playerName,
+  rank,
   onNextPlayer,
   onPlayAgain,
   onLeaderboard,
@@ -124,6 +126,30 @@ export function ResultScreen({
             </div>
           </div>
         </motion.div>
+
+        {rank && (rank.overall != null || rank.difficulty != null) && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.11, duration: 0.4 }}
+            className="glass-card px-4 py-3 mb-5 flex items-center justify-center gap-4 text-sm"
+          >
+            <span className="text-[10px] uppercase tracking-[0.18em] text-white/40">
+              Current Position
+            </span>
+            {rank.overall != null && (
+              <span className="font-display text-lg tracking-tight">
+                #{rank.overall} <span className="text-white/45 text-sm font-sans">Overall</span>
+              </span>
+            )}
+            {rank.difficulty != null && (
+              <span className="font-display text-lg tracking-tight">
+                #{rank.difficulty}{" "}
+                <span className="text-white/45 text-sm font-sans">{rank.difficultyLabel}</span>
+              </span>
+            )}
+          </motion.div>
+        )}
 
         {/* Stats */}
         <motion.div

@@ -16,12 +16,12 @@ import {
 } from "@/storage/storage";
 import { computeScore } from "@/lib/scoring";
 import { DIFFICULTIES } from "@/lib/difficulty";
-import type { Difficulty, GameResult, ScoreRecord, ScreenId } from "@/types";
+import type { Difficulty, GameResult, ResultRank, ScoreRecord, ScreenId } from "@/types";
 
 const DEFAULT_PLAYER_NAME = "Player";
 
 function isDifficulty(value: unknown): value is Difficulty {
-  return value === "easy" || value === "medium" || value === "hard";
+  return value === "easy" || value === "medium" || value === "hard" || value === "extreme";
 }
 
 function finiteNumber(value: unknown, fallback: number): number {
@@ -74,6 +74,21 @@ function sanitizeResult(input: Partial<GameResult> | null | undefined, fallbackN
   };
 }
 
+function calculateRank(scores: ScoreRecord[], scoreId: string, difficulty: Difficulty): ResultRank {
+  const byScore = (a: ScoreRecord, b: ScoreRecord) => b.score - a.score || a.createdAt - b.createdAt;
+  const overall = [...scores].sort(byScore).findIndex((score) => score.id === scoreId);
+  const difficultyRank = scores
+    .filter((score) => score.difficulty === difficulty)
+    .sort(byScore)
+    .findIndex((score) => score.id === scoreId);
+
+  return {
+    overall: overall >= 0 ? overall + 1 : null,
+    difficulty: difficultyRank >= 0 ? difficultyRank + 1 : null,
+    difficultyLabel: DIFFICULTIES[difficulty].label,
+  };
+}
+
 export default function App() {
   const { settings, toggleMute } = useSettings();
 
@@ -83,6 +98,7 @@ export default function App() {
   const [lastResult, setLastResult] = useState<GameResult | null>(() =>
     sanitizeResult(loadLatestResult(), DEFAULT_PLAYER_NAME)
   );
+  const [lastRank, setLastRank] = useState<ResultRank | null>(null);
   const [latestScoreId, setLatestScoreId] = useState<string | null>(null);
   const [scores, setScores] = useState<ScoreRecord[]>(() => loadScores());
   // Increment to force GameScreen remount for a fresh game
@@ -125,11 +141,14 @@ export default function App() {
           timeLeftMs: safeResult.remainingMs,
           solved: safeResult.solved,
         });
+        const nextScores = loadScores();
         setLatestScoreId(saved.id);
-        refreshScores();
+        setScores(nextScores);
+        setLastRank(calculateRank(nextScores, saved.id, safeResult.difficulty));
       } catch (error) {
         console.error("[Hanoi Royale] leaderboard save failed; showing result anyway", error);
         setLatestScoreId(null);
+        setLastRank(null);
       }
       setScreen("result");
     },
@@ -173,6 +192,7 @@ export default function App() {
               key={`game-${gameKey}`}
               playerName={playerName}
               difficulty={difficulty}
+              scores={scores}
               onComplete={handleRoundComplete}
             />
           )}
@@ -182,6 +202,7 @@ export default function App() {
               key="result"
               result={lastResult ? sanitizeResult(lastResult, playerName) : sanitizeResult(loadLatestResult(), playerName)}
               playerName={lastResult?.playerName || playerName || DEFAULT_PLAYER_NAME}
+              rank={lastRank}
               onNextPlayer={() => navigate("new-player")}
               onPlayAgain={() => {
                 gameKeyRef.current += 1;

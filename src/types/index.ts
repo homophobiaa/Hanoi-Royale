@@ -1,4 +1,4 @@
-export type Difficulty = "easy" | "medium" | "hard";
+export type Difficulty = "easy" | "medium" | "hard" | "extreme";
 
 export interface DifficultyConfig {
   id: Difficulty;
@@ -73,6 +73,12 @@ export interface GameResult {
   score: number;
   reason: "solved" | "timeout" | "quit";
   completedAt: number;
+}
+
+export interface ResultRank {
+  overall: number | null;
+  difficulty: number | null;
+  difficultyLabel: string;
 }
 
 export interface PlayerProfile {

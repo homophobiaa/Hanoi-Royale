@@ -332,7 +332,9 @@ function DifficultyChip({ d }: { d: Difficulty }) {
       ? "bg-emerald-400/10 text-emerald-200 border-emerald-300/20"
       : d === "medium"
         ? "bg-violet-400/10 text-violet-200 border-violet-300/20"
-        : "bg-rose-400/10 text-rose-200 border-rose-300/20";
+        : d === "hard"
+          ? "bg-rose-400/10 text-rose-200 border-rose-300/20"
+          : "bg-amber-400/10 text-amber-100 border-amber-300/25";
   return (
     <span
       className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[11px] font-medium ${tone}`}
